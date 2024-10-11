@@ -1,71 +1,50 @@
----
-title: Introduction
-description: 'Welcome to the home of your new documentation'
----
 
-<img
-  className="block dark:hidden"
-  src="/images/hero-light.svg"
-  alt="Hero Light"
-/>
-<img
-  className="hidden dark:block"
-  src="/images/hero-dark.svg"
-  alt="Hero Dark"
-/>
+# Basics
 
-## Setting up
+## What is a project
 
-The first step to world-class documentation is setting up your editing environments.
+A Stacktape project is a "logical container" into which you deploy your application. A project can contain multiple stages, allowing you to manage different application versions simultaneously. Each stage is an independent **stack** and therefore an independent copy of your application. This enables you to have development, testing, and production deployments of your application within the same project.
 
-<CardGroup cols={2}>
-  <Card
-    title="Edit Your Docs"
-    icon="pen-to-square"
-    href="https://mintlify.com/docs/quickstart"
-  >
-    Get your docs set up locally for easy development
-  </Card>
-  <Card
-    title="Preview Changes"
-    icon="image"
-    href="https://mintlify.com/docs/development"
-  >
-    Preview your changes before you push to make sure they're perfect
-  </Card>
-</CardGroup>
+## What is a stack
 
-## Make it yours
+A stack is a product of deployment. It is a specific stage of your project. A stack contains both:
 
-Update your docs to your brand and add valuable content for the best user conversion.
+- **Applications** (your code running in a container, lambda function, etc.)
+- **Infrastructure** (e.g., SQL database, Redis, Kafka, ElasticSearch, etc.)
 
-<CardGroup cols={2}>
-  <Card
-    title="Customize Style"
-    icon="palette"
-    href="https://mintlify.com/docs/settings/global"
-  >
-    Customize your docs to your company's colors and brands
-  </Card>
-  <Card
-    title="Reference APIs"
-    icon="code"
-    href="https://mintlify.com/docs/api-playground/openapi"
-  >
-    Automatically generate endpoints from an OpenAPI spec
-  </Card>
-  <Card
-    title="Add Components"
-    icon="screwdriver-wrench"
-    href="https://mintlify.com/docs/components/accordion"
-  >
-    Build interactive features and designs to guide your users
-  </Card>
-  <Card
-    title="Get Inspiration"
-    icon="stars"
-    href="https://mintlify.com/customers"
-  >
-    Check out our showcase of our favorite documentation
-  </Card>
-</CardGroup>
+To deploy your stack, you need to specify:
+
+- **Stacktape configuration** – this is a blueprint of your application (written in YAML, JSON, or Typescript)
+- **AWS region** – one of [33 available globally](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.RegionsAndAvailabilityZones.html#Concepts.RegionsAndAvailabilityZones.Regions)
+- **Stage** – the stage of your application/project (e.g., `staging`, `dev`, or `production`)
+- **Project name**
+
+Every Stacktape stack translates to exactly 1 [AWS CloudFormation](https://aws.amazon.com/cloudformation/) stack.
+
+## Configuration
+
+The configuration defines how to:
+
+- build your application
+- specify the infrastructure resources it requires
+- determine the scripts to run during the deployment
+- manage other aspects
+
+The Stacktape configuration is very concise. For example, approximately **30 lines** of Stacktape configuration can translate to roughly **1200 lines** of AWS CloudFormation and other configuration files you'd otherwise need to write.
+
+## Deployments
+
+Every deployment has multiple phases:
+
+1. **Package your workloads** – lambda functions & containers (if any)
+2. **Create resources for deployment artifacts** – ECR image repository and S3 deployment bucket
+3. **Upload deployment artifacts** – images & lambda functions
+4. **Perform CloudFormation deployment** – creating the rest of the infrastructure resources
+
+If anything fails, Stacktape automatically rolls everything back to the previous working state.
+
+You can evolve your stacks as you go. For example, if you decide to add more resources to it or increase the amount of container memory, simply adjust the configuration and rerun the deployment.
+
+Most updates happen in place, without disrupting normal use. Some updates require a replacement, meaning an entirely new resource is created to replace the existing one. Stacktape designs templates to minimize these situations, and you'll be notified before such an update occurs.
+
+To speed up deployments, Stacktape also offers a hot-swap mode that updates certain resources directly, without using CloudFormation. For example, if only the lambda function or container code has changed, the deployment will take just a few seconds.
