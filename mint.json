@@ -5,12 +5,17 @@
     "dark": "/logo/stp-full-dark.svg",
     "light": "logo/stp-dark.svg"
   },
+  "modeToggle": {
+    "default": "dark",
+    "isHidden": true
+  },
   "favicon": "/favicon.png",
   "colors": {
     "primary": "#21a7a2",
-    "light": "#07C983",
+    "light": "#21a7a2",
     "dark": "#0D9373",
     "background": { "dark": "#212121", "light": "#212121" },
+
     "anchors": {
       "from": "#0D9373",
       "to": "#07C983"
