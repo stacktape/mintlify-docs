@@ -8,8 +8,9 @@
   "favicon": "/favicon.png",
   "colors": {
     "primary": "#21a7a2",
-    "light": "#212121",
-    "dark": "#212121",
+    "light": "#07C983",
+    "dark": "#0D9373",
+    "background": { "dark": "#212121", "light": "#212121" },
     "anchors": {
       "from": "#0D9373",
       "to": "#07C983"
@@ -28,7 +29,7 @@
 
   "anchors": [
     {
-      "name": "Documentation",
+      "name": "Old docs",
       "icon": "book-open-cover",
       "url": "https://docs.stacktape.com/"
     },
