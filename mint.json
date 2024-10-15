@@ -3,7 +3,7 @@
   "name": "Starter Kit",
   "logo": {
     "dark": "/logo/stp-full-dark.svg",
-    "light": "logo/stp-dark.svg"
+    "light": "/logo/stp-dark.svg"
   },
   "modeToggle": {
     "default": "dark",
@@ -17,8 +17,8 @@
     "background": { "dark": "#212121", "light": "#212121" },
 
     "anchors": {
-      "from": "#0D9373",
-      "to": "#07C983"
+      "from": "#21A7A2",
+      "to": "#003300"
     }
   },
   "topbarLinks": [
