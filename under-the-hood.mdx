@@ -1,0 +1,129 @@
+---
+title: "Under the hood"
+---
+
+<br />
+<br />
+
+# Deployments
+
+Stacktape deployments consist of multiple phases.
+
+## 1. Resolve & validate configuration
+
+Stacktape compiles Stacktape configuration into AWS _Cloudformation_ template. The compiled Cloudformation template
+contains low-level specifications for infrastructure resources needed to run your application.
+
+## 2. Build & package code
+
+Stacktape builds and packages your application code and creates artifacts (container images, Lambda zip packages) that
+will run in AWS. Stacktape builds artifacts according to your packaging specifications in the
+[Stacktape configuration](/configuring-stack/#2-configure-packaging)
+
+## 3. Create initial resources
+
+To deploy your application, your artifacts (container images, lambda packages) must be already in AWS. This means that
+when deploying a new stack (project stage), Stacktape must first "bootstrap" your stack by creating an S3 bucket (for
+Lambda artifacts and Cloudformation template) and an ECR repository (for container images). This phase is skipped on
+subsequent deployments of the stack.
+
+## 4. Upload deployment artifacts
+
+In this phase, Stacktape uploads artifacts (created in Phase 2) into the S3 bucket and ECR repository (pre-created in
+Phase 3). Uploads are done in parallel to speed them up as much as possible. Stacktape also employs caching - if an
+artifact has not changed between deployments, Stacktape will skip its upload. Only new and changed artifacts are
+uploaded.
+
+## 5. Deploy infrastructure resources
+
+In this phase, Stacktape uses the Cloudformation template created in Phase 1 and deploys your application along with all
+the infrastructure resources. Stacktape monitors the deployment until it finishes and lets you know if an error occurs.
+If an error occurs, the stack is automatically rolled back to the previous working state.
+
+After the first deployment, subsequent deployments update only the resources of your stack that have changed. Resources
+that have not changed are unaffected, speeding up the deployment process.
+
+Stacktape also offers a hot swap mode that you can activate by using `--hotSwap` switch during the deploy. In hot swap
+mode, Stacktape will try to bypass Cloudformation and update selected resources directly (lambda functions and container
+resources) to speed up the update. The hot swap mode only activates if Stacktape detects that all of the changes are
+hot-swappable (changes to your application code), but there are NO other changes to your configuration. If Stacktape
+detects that the hot swap is not possible, it automatically falls back to using Cloudformation.
+
+# Stack resources
+
+You can inspect your deployed stacktape resources in [stacktape console](https://console.stacktape.com/). Within a
+resource detail, you can see what Cloudformation resources your stacktape resource translates into. Cloudformation
+resources correspond to the actual AWS resources, which you can also find in your AWS console.
+
+![View resource detail](/static/under-the-hood/view-resource.jpg)
+
+![View child resources](/static/under-the-hood/view-child-resources.png)
+
+## Naming conventions
+
+Stacktape applies a consistent naming convention for all of your stack's resources. This organizes your resources and
+helps to find your resources even when you need to navigate in AWS console.
+
+Example:
+
+Let's assume we deploy a stack with the following configuration into the project `my-project` to stage `dev`:
+
+```yml
+resources:
+  myLambda:
+    type: function
+    properties:
+      packaging:
+        type: stacktape-lambda-buildpack
+        properties:
+          entryfilePath: path/to/my/lambda.ts
+```
+
+This will result in the following:
+
+- Name of the stack in AWS: `my-project-dev` (format **{projectName}-{stage}**)
+- Name of the lambda function in AWS: `my-project-dev-myLambda` (format **{projectName}-{stage}-{resourceName}**)
+
+Stacktape extends this convention to every resource of your stack where possible.
+
+Naturally, some AWS resources impose limits on the name of their resources (mainly length limits). If the resulting name
+for a specific AWS resource is too long, Stacktape truncates the name and ads hash.
+
+For example, a name like `my-project-dev-myTooLongResourceNameForSomeResource`
+
+could be truncated into something like `my-project-dev-myTooLongRe-5ks6a4`.
+
+## Cloudformation template
+
+You can see the entire template of your Cloudformation stack in [stacktape console](https://console.stacktape.com/). In
+the template you can in detail see how your AWS resources are configured.
+
+![View Cloudformation template](/static/under-the-hood/view-cf-template.jpg)
+
+# Behind-the-scenes concepts
+
+Stacktape uses AWS CloudFormation to deploy your infrastructure. However, to provide a seamless experience and rich
+functionality, multiple concepts are employed in the background.
+
+## Direct AWS API calls
+
+While _Cloudformation_ can handle the bulk of the responsibilities required for deploying infrastructure, Stacktape
+provides functionalities that are out of Cloudformation's scope. Stacktape directly communicates with various AWS
+services through their APIs to ensure this functionality:
+
+- uploading of the artifacts
+- monitoring of the deployment itself
+- executing hot swap deploy
+- detecting a root cause of container failure during deployment
+- ... and much more
+
+## CloudFormation extensions
+
+While Cloudformation natively supports all of the AWS resources, Stacktape also allows users to deploy infrastructure
+from third-party providers such as [Atlas MongoDB](https://www.mongodb.com/products/platform/atlas-database) or
+[Upstash](https://upstash.com/). To provision this infrastructure while still retaining Cloudformation benefits such as
+automatic state management and rollback, Stacktape develops and helps maintain third-party open-source Cloudformation
+extensions that make this possible.
+
+The user himself does not need to bother himself with these extensions. Stacktape automatically installs and updates
+them as needed as a part of the deployment process.

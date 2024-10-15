@@ -1,0 +1,117 @@
+---
+title: "Deploying - using console"
+sidebarTitle: "Sidebar title (optional - if different from page title)"
+description: "Subtitle (optional)"
+---
+
+# Prerequisites
+
+To deploy a git project using Stacktape:
+
+1. You must have a Stacktape account. If you don't have an account, please
+   [sign up](https://console.stacktape.com/sign-up)
+
+2. You must have an AWS account connected to your Stacktape organization. Connecting your account takes ~2 minutes. You
+   can connect the account on [AWS accounts page in the console](https://console.stacktape.com/aws-accounts)
+
+# 1 - Create new Stacktape project
+
+After signing in to the console, click on `Deploy new project` and select `Git project using console`.
+
+![Create project](/static/getting-started/first-deploy/docs1.png)
+
+Fill in the **Project name** - this will be the name of your project in Stacktape. A project name must use a small
+alphanumeric dash case.
+
+![Fill in the project name](/static/connect-gitlab/1.png)
+
+## 1.1 - Connect your Git repository
+
+### Option A - GitHub
+
+Click the `Connect GitHub Account` button to start connecting your GitHub Account/Organization with Stacktape.
+
+![Connecting with GitHub](/static/getting-started/first-deploy/docsgithub1.png)
+
+Click the `Install` button to start Stacktape GitHub app configuration.
+
+![Install GitHub app 1](/static/getting-started/first-deploy/docsinstall.png)
+
+Select GitHub organization.
+
+![Install GitHub app 2](/static/getting-started/first-deploy/docsgithubconnect3.png)
+
+Finish installation by clicking the `Install` button.
+
+![Install GitHub app 3](/static/getting-started/first-deploy/docsgithubconnect4.png)
+
+### Option B - GitLab
+
+Click the `Connect GitLab Account` button to start connecting your GitLab Account/Project with Stacktape.
+
+![Connecting with GitLab](/static/connect-gitlab/1.png)
+
+Authorize application access to your GitLab account
+
+![Connecting with GitLab 2](/static/connect-gitlab/2.png)
+
+## 1.2 - Select repository to deploy
+
+After successfully connecting your git account, go back to project creation in Stacktape console.
+
+Select the repository with the project you wish to deploy.
+
+![Select repository](/static/getting-started/first-deploy/docsgithub2.png)
+
+After you have finished the steps above, continue by clicking the `Continue` button.
+
+![Finish project setup](/static/getting-started/first-deploy/docs2.3.png)
+
+# 2 - Deploy new stage
+
+After you have created your project, you will be redirected to the project page.
+
+Continue by clicking `Create new stage` button
+
+![Create new stage](/static/getting-started/first-deploy/project4.png)
+
+## 2.1 - Configure stage details
+
+Configure your environment details:
+
+1. **Branch** - branch to use for deployment,
+2. **Commit** - commit to use for initial deployment,
+3. **Stage** - arbitrary alphanumeric dash-case string. For example, `production`, `staging` or `john-dev`.
+4. **AWS Account** - select an AWS account connected to your Stacktape organization.
+5. If your repository does NOT contain a stacktape template (`stacktape.yml` or `stacktape.ts`), choose **Create new
+   infrastructure configuration**.
+
+![Configuring environment details](/static/getting-started/first-deploy/docs4.png)
+
+## 2.2 - Create Stacktape configuration
+
+1.  **(Recommended)** Use the [interactive config editor](https://console.stacktape.com/template-editor). To learn about
+    how to use it, head over to [using the config editor](/getting-started/using-config-editor).
+
+2.  Use a [starter projects](/getting-started/starter-project) with a pre-configured Stacktape configuration.
+
+3.  Follow one of the step-by-step tutorials. Currenctly available tutorials are
+    [Fullstack Next.js T3 app](/tutorials/t3-nextjs-app) and [Web API](/tutorials/web-api).
+
+4.  Write the config manually. To make this process easier, you can install
+    [Stacktape VScode extension](https://marketplace.visualstudio.com/items?itemName=stacktape.vscode-stacktape).
+
+## 2.3 - Deploy
+
+When your template is ready, click on the `Deploy now` button.
+
+![Start the deployment](/static/getting-started/first-deploy/docscode4.png)
+
+After starting the deployment, you will be redirected to the deployment monitoring page, where you can see the
+deployment progress.
+
+![Deployment monitoring page](/static/getting-started/first-deploy/docs13.png)
+
+After deployment succeeds, you can redirect to the stack details page.
+
+![Stack overview page](/static/getting-started/first-deploy/docs14.png)
